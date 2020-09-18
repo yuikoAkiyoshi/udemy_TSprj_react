@@ -1,24 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState} from 'react';
+import TodoList from './components/TodoList';
+import NewTodo from './components/NewTodo';
+import { stringify } from 'querystring';
 
-function App() {
+import {Todo} from './todo.model';
+
+const App: React.FC = () => {
+  // const [todos, setTodos] = useState<{id:string,text:string}[]>([]);
+  //↑このように型定義を直接書いてもいいが、再利用したいためmodelファイルに切り分け
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const todoAddHandler= (text:string) =>{
+    setTodos(prevState => [
+      ...prevState,
+      {
+        id:Math.random().toString(),
+        text: text
+      }
+    ]);
+  }
+
+  const todoDeleteHandler = (todoId:string) =>{
+    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId))
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NewTodo todoAddHandler = {todoAddHandler}/>
+      <TodoList items={todos} onDeleteTodo={todoDeleteHandler}/>
     </div>
   );
 }
